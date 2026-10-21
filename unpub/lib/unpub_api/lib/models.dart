@@ -22,7 +22,12 @@ class ListApiPackage {
   DateTime updatedAt;
 
   ListApiPackage(
-      this.name, this.description, this.tags, this.latest, this.updatedAt);
+    this.name,
+    this.description,
+    this.tags,
+    this.latest,
+    this.updatedAt,
+  );
 
   factory ListApiPackage.fromJson(Map<String, dynamic> map) =>
       _$ListApiPackageFromJson(map);
@@ -58,18 +63,19 @@ class WebapiDetailView {
   List<String> tags;
 
   WebapiDetailView(
-      this.name,
-      this.version,
-      this.description,
-      this.homepage,
-      this.uploaders,
-      this.createdAt,
-      this.readme,
-      this.changelog,
-      this.versions,
-      this.authors,
-      this.dependencies,
-      this.tags);
+    this.name,
+    this.version,
+    this.description,
+    this.homepage,
+    this.uploaders,
+    this.createdAt,
+    this.readme,
+    this.changelog,
+    this.versions,
+    this.authors,
+    this.dependencies,
+    this.tags,
+  );
 
   factory WebapiDetailView.fromJson(Map<String, dynamic> map) =>
       _$WebapiDetailViewFromJson(map);

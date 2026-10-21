@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
-import 'package_store.dart';
+import 'package:unpub_next/src/package_store.dart';
 
 class FileStore extends PackageStore {
-  String baseDir;
-  String Function(String name, String version)? getFilePath;
+  final String baseDir;
+  final String Function(String name, String version)? getFilePath;
 
   FileStore(this.baseDir, {this.getFilePath});
 
@@ -16,7 +16,7 @@ class FileStore extends PackageStore {
 
   @override
   Future<void> upload(String name, String version, List<int> content) async {
-    var file = _getTarballFile(name, version);
+    final file = _getTarballFile(name, version);
     await file.create(recursive: true);
     await file.writeAsBytes(content);
   }

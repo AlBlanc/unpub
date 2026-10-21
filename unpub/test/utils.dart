@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
-import 'package:unpub/unpub.dart' as unpub;
+import 'package:unpub_next/unpub.dart' as unpub;
 import 'package:mongo_dart/mongo_dart.dart';
 
 final notExistingPacakge = 'not_existing_package';
@@ -43,15 +43,21 @@ Future<http.Response> getSpecificVersion(String package, String version) {
 }
 
 Future<ProcessResult> pubPublish(String name, String version) {
-  return Process.run('dart', ['pub', 'publish', '--force'],
-      workingDirectory: path.absolute('test/fixtures', name, version),
-      environment: {'PUB_HOSTED_URL': pubHostedUrl});
+  return Process.run(
+    'dart',
+    ['pub', 'publish', '--force'],
+    workingDirectory: path.absolute('test/fixtures', name, version),
+    environment: {'PUB_HOSTED_URL': pubHostedUrl},
+  );
 }
 
 Future<ProcessResult> pubUploader(String name, String operation, String email) {
   assert(['add', 'remove'].contains(operation), 'operation error');
 
-  return Process.run('dart', ['pub', 'uploader', operation, email],
-      workingDirectory: path.absolute('test/fixtures', name, '0.0.1'),
-      environment: {'PUB_HOSTED_URL': pubHostedUrl});
+  return Process.run(
+    'dart',
+    ['pub', 'uploader', operation, email],
+    workingDirectory: path.absolute('test/fixtures', name, '0.0.1'),
+    environment: {'PUB_HOSTED_URL': pubHostedUrl},
+  );
 }

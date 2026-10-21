@@ -1,4 +1,4 @@
-import 'package:unpub/src/models.dart';
+import 'package:unpub_next/src/models.dart';
 
 abstract class MetaStore {
   Future<UnpubPackage?> queryPackage(String name);

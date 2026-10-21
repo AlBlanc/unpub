@@ -1,8 +1,12 @@
-# Unpub
+# unpub_next
 
-[![pub](https://img.shields.io/pub/v/unpub.svg)](https://pub.dev/packages/unpub)
+[![pub](https://img.shields.io/pub/v/unpub_next.svg)](https://pub.dev/packages/unpub_next)
 
-Unpub is a self-hosted private Dart Pub server for Enterprise, with a simple web interface to search and view packages information.
+> [!NOTE]
+> **Fork Notice**: `unpub_next` is an actively maintained fork of [`pd4d10/unpub`](https://github.com/pd4d10/unpub) (which was no longer actively maintained).
+> All dependencies have been updated to modern versions and the codebase has been modernized to leverage Dart 3 features.
+
+`unpub_next` is a self-hosted private Dart Pub server for Enterprise, with a simple web interface to search and view packages information.
 
 ## Screenshots
 
@@ -13,11 +17,21 @@ Unpub is a self-hosted private Dart Pub server for Enterprise, with a simple web
 ### Command Line
 
 ```sh
-pub global activate unpub
-unpub --database mongodb://localhost:27017/dart_pub # Replace this with production database uri
+dart pub global activate unpub_next
+unpub_next --database mongodb://localhost:27017/dart_pub # Replace this with production database uri
 ```
 
-Unpub use mongodb as meta information store and file system as package(tarball) store by default.
+> The command `unpub` is also available as an alias for backwards compatibility.
+
+Options:
+- `--help`: Print CLI usage options.
+- `-h, --host`: Host to bind to (default: `0.0.0.0`).
+- `-p, --port`: Port to listen on (default: `4000`).
+- `-d, --database`: MongoDB connection URI (default: `mongodb://localhost:27017/dart_pub`).
+- `-o, --proxy-origin`: Base URL if served behind a reverse proxy.
+- `-e, --override-uploader-email`: Override the uploader email address for published packages.
+
+`unpub_next` uses MongoDB as meta information store and the file system as package (tarball) store by default.
 
 Dart API is also available for further customization.
 
@@ -25,9 +39,9 @@ Dart API is also available for further customization.
 
 ```dart
 import 'package:mongo_dart/mongo_dart.dart';
-import 'package:unpub/unpub.dart' as unpub;
+import 'package:unpub_next/unpub_next.dart' as unpub;
 
-main(List<String> args) async {
+Future<void> main(List<String> args) async {
   final db = Db('mongodb://localhost:27017/dart_pub');
   await db.open(); // make sure the MongoDB connection opened
 
@@ -49,6 +63,7 @@ main(List<String> args) async {
 | `packageStore` (Required) | Package(tarball) store | - |
 | `upstream` | Upstream url | https://pub.dev |
 | `googleapisProxy` | Http(s) proxy to call googleapis (to get uploader email) | - |
+| `overrideUploaderEmail` | Override uploader email address | - |
 | `uploadValidator` | See [Package validator](#package-validator) | - |
 
 
@@ -94,10 +109,10 @@ var app = unpub.App(
 
 ### Customize meta and package store
 
-Unpub is designed to be extensible. It is quite easy to customize your own meta store and package store.
+`unpub_next` is designed to be extensible. It is quite easy to customize your own meta store and package store.
 
 ```dart
-import 'package:unpub/unpub.dart' as unpub;
+import 'package:unpub_next/unpub_next.dart' as unpub;
 
 class MyAwesomeMetaStore extends unpub.MetaStore {
   // Implement methods of MetaStore abstract class
@@ -134,6 +149,7 @@ var app = unpub.App(
 
 ## Credits
 
+- [pd4d10/unpub](https://github.com/pd4d10/unpub): Original unpub project.
 - [pub-dev](https://github.com/dart-lang/pub-dev): Web page styles are mostly imported from https://pub.dev directly.
 - [shields](https://shields.io): Badges generation.
 

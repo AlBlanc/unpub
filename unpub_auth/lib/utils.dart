@@ -4,24 +4,33 @@ import 'package:path/path.dart' as path;
 
 class Utils {
   static bool _verbose = false;
+  static bool get isVerbose => _verbose;
   static void enableVerbose() => _verbose = true;
+
   static bool _silence = false;
+  static bool get isSilent => _silence;
   static void enableSilence() => _silence = true;
 
-  static final credentialsFilePath =
-      path.join(Utils.dartConfigDir, r'unpub-credentials.json');
+  static final credentialsFilePath = path.join(
+    Utils.dartConfigDir,
+    r'unpub-credentials.json',
+  );
 
   /// The location for dart-specific configuration.
   static final String dartConfigDir = () {
     String? configDir;
     if (Platform.isLinux) {
-      configDir = Platform.environment['XDG_CONFIG_HOME'] ??
+      configDir =
+          Platform.environment['XDG_CONFIG_HOME'] ??
           path.join(Platform.environment['HOME']!, '.config');
     } else if (Platform.isWindows) {
       configDir = Platform.environment['APPDATA']!;
     } else if (Platform.isMacOS) {
       configDir = path.join(
-          Platform.environment['HOME']!, 'Library', 'Application Support');
+        Platform.environment['HOME']!,
+        'Library',
+        'Application Support',
+      );
     } else {
       configDir = path.join(Platform.environment['HOME'] ?? '', '.config');
     }
@@ -60,9 +69,19 @@ class Utils {
     if (index == -1) return [toSplit];
     return [
       toSplit.substring(0, index),
-      toSplit.substring(index + pattern.length)
+      toSplit.substring(index + pattern.length),
     ];
   }
 
-  static void stdoutPrint(Object? object) => stdout.write(object);
+  static void stdoutPrint(Object? object) {
+    if (!_silence) {
+      stdout.write(object);
+    }
+  }
+
+  static void logVerbose(Object? object) {
+    if (_verbose) {
+      stdout.writeln(object);
+    }
+  }
 }

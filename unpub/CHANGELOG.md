@@ -1,3 +1,11 @@
+## 3.0.0
+
+- Rename package to `unpub_next` (fork of `pd4d10/unpub`).
+- Upgrade SDK constraint to Dart 3 (`^3.8.0`).
+- Update all dependencies to modern versions (`shelf`, `shelf_router`, `http`, `mongo_dart`, `json_annotation`, `test`, `build_runner`).
+- Modernize Dart syntax (records, pattern matching, switch expressions, non-blocking streams).
+- Add `--override-uploader-email` (`-e`) and `--help` CLI options in `bin/unpub_next.dart` (with backward-compatible `bin/unpub.dart`).
+
 ## 2.0.0
 
 - Supports NNBD

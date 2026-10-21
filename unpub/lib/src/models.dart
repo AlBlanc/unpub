@@ -59,6 +59,8 @@ class UnpubPackage {
 
   factory UnpubPackage.fromJson(Map<String, dynamic> map) =>
       _$UnpubPackageFromJson(map);
+
+  Map<String, dynamic> toJson() => _$UnpubPackageToJson(this);
 }
 
 @JsonSerializable()
@@ -70,4 +72,6 @@ class UnpubQueryResult {
 
   factory UnpubQueryResult.fromJson(Map<String, dynamic> map) =>
       _$UnpubQueryResultFromJson(map);
+
+  Map<String, dynamic> toJson() => _$UnpubQueryResultToJson(this);
 }

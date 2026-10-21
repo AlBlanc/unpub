@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:cli';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:minio/minio.dart';
-import 'package:unpub/unpub.dart';
+import 'package:unpub_next/unpub.dart';
 import 'package:unpub_aws/core/aws_credentials.dart';
 
 /// Use an AWS S3 Bucket as a package store
@@ -17,13 +17,15 @@ class S3Store extends PackageStore {
   Minio? minio;
   Map<String, String>? environment;
 
-  S3Store(this.bucketName,
-      {this.region,
-        this.getObjectPath,
-        this.endpoint,
-        this.credentials,
-        this.minio, this.environment}) {
-
+  S3Store(
+    this.bucketName, {
+    this.region,
+    this.getObjectPath,
+    this.endpoint,
+    this.credentials,
+    this.minio,
+    this.environment,
+  }) {
     final env = environment ?? Platform.environment;
 
     // Check for env vars or container credentials if none were provided.
@@ -51,12 +53,22 @@ class S3Store extends PackageStore {
 
   @override
   Future<void> upload(String name, String version, List<int> content) async {
+    final uint8Bytes = content is Uint8List
+        ? content
+        : Uint8List.fromList(content);
     await minio!.putObject(
-        bucketName, _getObjectKey(name, version), Stream.value(content));
+      bucketName,
+      _getObjectKey(name, version),
+      Stream.value(uint8Bytes),
+    );
   }
 
   @override
-  Stream<List<int>> download(String name, String version) {
-    return waitFor(minio!.getObject(bucketName, _getObjectKey(name, version)));
+  Stream<List<int>> download(String name, String version) async* {
+    final stream = await minio!.getObject(
+      bucketName,
+      _getObjectKey(name, version),
+    );
+    yield* stream;
   }
 }

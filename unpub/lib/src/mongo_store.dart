@@ -1,68 +1,73 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:intl/intl.dart';
-import 'package:unpub/src/models.dart';
+import 'package:unpub_next/src/models.dart';
 import 'meta_store.dart';
 
-final packageCollection = 'packages';
-final statsCollection = 'stats';
+const packageCollection = 'packages';
+const statsCollection = 'stats';
 
 class MongoStore extends MetaStore {
-  Db db;
+  final Db db;
 
   MongoStore(this.db);
 
   static SelectorBuilder _selectByName(String? name) => where.eq('name', name);
 
   Future<UnpubQueryResult> _queryPackagesBySelector(
-      SelectorBuilder selector) async {
+    SelectorBuilder selector,
+  ) async {
     final count = await db.collection(packageCollection).count(selector);
     final packages = await db
         .collection(packageCollection)
         .find(selector)
-        .map((item) => UnpubPackage.fromJson(item))
+        .map(UnpubPackage.fromJson)
         .toList();
     return UnpubQueryResult(count, packages);
   }
 
   @override
-  queryPackage(name) async {
-    var json =
-        await db.collection(packageCollection).findOne(_selectByName(name));
+  Future<UnpubPackage?> queryPackage(String name) async {
+    final json = await db
+        .collection(packageCollection)
+        .findOne(_selectByName(name));
     if (json == null) return null;
     return UnpubPackage.fromJson(json);
   }
 
   @override
-  addVersion(name, version) async {
-    await db.collection(packageCollection).update(
-        _selectByName(name),
-        modify
-            .push('versions', version.toJson())
-            .addToSet('uploaders', version.uploader)
-            .setOnInsert('createdAt', version.createdAt)
-            .setOnInsert('private', true)
-            .setOnInsert('download', 0)
-            .set('updatedAt', version.createdAt),
-        upsert: true);
+  Future<void> addVersion(String name, UnpubVersion version) async {
+    await db
+        .collection(packageCollection)
+        .update(
+          _selectByName(name),
+          modify
+              .push('versions', version.toJson())
+              .addToSet('uploaders', version.uploader)
+              .setOnInsert('createdAt', version.createdAt)
+              .setOnInsert('private', true)
+              .setOnInsert('download', 0)
+              .set('updatedAt', version.createdAt),
+          upsert: true,
+        );
   }
 
   @override
-  addUploader(name, email) async {
+  Future<void> addUploader(String name, String email) async {
     await db
         .collection(packageCollection)
         .update(_selectByName(name), modify.push('uploaders', email));
   }
 
   @override
-  removeUploader(name, email) async {
+  Future<void> removeUploader(String name, String email) async {
     await db
         .collection(packageCollection)
         .update(_selectByName(name), modify.pull('uploaders', email));
   }
 
   @override
-  increaseDownloads(name, version) {
-    var today = DateFormat('yyyyMMdd').format(DateTime.now());
+  void increaseDownloads(String name, String version) {
+    final today = DateFormat('yyyyMMdd').format(DateTime.now());
     db
         .collection(packageCollection)
         .update(_selectByName(name), modify.inc('download', 1));
@@ -73,15 +78,17 @@ class MongoStore extends MetaStore {
 
   @override
   Future<UnpubQueryResult> queryPackages({
-    required size,
-    required page,
-    required sort,
-    keyword,
-    uploader,
-    dependency,
+    required int size,
+    required int page,
+    required String sort,
+    String? keyword,
+    String? uploader,
+    String? dependency,
   }) {
-    var selector =
-        where.sortBy(sort, descending: true).limit(size).skip(page * size);
+    var selector = where
+        .sortBy(sort, descending: true)
+        .limit(size)
+        .skip(page * size);
 
     if (keyword != null) {
       selector = selector.match('name', '.*$keyword.*');
@@ -93,9 +100,9 @@ class MongoStore extends MetaStore {
       selector = selector.raw({
         'versions': {
           r'$elemMatch': {
-            'pubspec.dependencies.$dependency': {r'$exists': true}
-          }
-        }
+            'pubspec.dependencies.$dependency': {r'$exists': true},
+          },
+        },
       });
     }
 
