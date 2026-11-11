@@ -3,14 +3,16 @@ import 'package:angular_router/angular_router.dart';
 import 'home_component.template.dart' as home_template;
 import 'list_component.template.dart' as list_template;
 import 'detail_component.template.dart' as detail_template;
+
 // import 'not_found_component.template.dart' as not_found_template;
 
 class RoutePaths {
   static final home = RoutePath(path: '');
   static final list = RoutePath(path: 'packages');
   static final detail = RoutePath(path: 'packages/:name');
-  static final detailVersion =
-      RoutePath(path: 'packages/:name/versions/:version');
+  static final detailVersion = RoutePath(
+    path: 'packages/:name/versions/:version',
+  );
 }
 
 class Routes {

@@ -20,7 +20,10 @@ String resolveMongoUri({
 
   // 2. Check full URI environment variables
   final envUri =
-      env['MONGODB_URI'] ?? env['MONGO_URL'] ?? env['DB_URL'] ?? env['UNPUB_DATABASE'];
+      env['MONGODB_URI'] ??
+      env['MONGO_URL'] ??
+      env['DB_URL'] ??
+      env['UNPUB_DATABASE'];
   if (envUri != null && envUri.trim().isNotEmpty) {
     return envUri.trim();
   }

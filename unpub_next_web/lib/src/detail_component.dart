@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:html';
+
 import 'package:angular/angular.dart';
 import 'package:angular_router/angular_router.dart';
 import 'package:markdown/markdown.dart';
 import 'package:unpub_next_web/app_service.dart';
+
 import 'routes.dart';
+
 import 'package:unpub_api/models.dart';
 
 // Allow all url
@@ -88,8 +91,9 @@ class DetailComponent implements OnInit, OnActivate {
     if (version == null) {
       return RoutePaths.detail.toUrl(parameters: {'name': name});
     } else {
-      return RoutePaths.detailVersion
-          .toUrl(parameters: {'name': name, 'version': version});
+      return RoutePaths.detailVersion.toUrl(
+        parameters: {'name': name, 'version': version},
+      );
     }
   }
 }
