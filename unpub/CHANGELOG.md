@@ -1,3 +1,16 @@
+## 3.1.0
+
+- Support full configuration via environment variables:
+  - MongoDB connection string: `MONGO_URL`, `MONGODB_URI`, `DB_URL`, `UNPUB_DATABASE`.
+  - Granular MongoDB credentials: `MONGO_HOST`, `MONGO_PORT`, `MONGO_DB`, `MONGO_USER`, `MONGO_PASSWORD`, `MONGO_AUTH_SOURCE`.
+  - Server parameters: `UNPUB_HOST`, `UNPUB_PORT`, `UNPUB_PROXY_ORIGIN`, `UNPUB_DATA_DIR`.
+  - Uploader override email: `UNPUB_OVERRIDE_UPLOADER_EMAIL` / `OVERRIDE_UPLOADER_EMAIL`.
+- Add production-ready multi-stage Dockerfile (`docker/Dockerfile`) compiling native Dart 3 AOT binaries.
+- Add TCP service readiness wait mechanism powered by `docker-compose-wait` (`WAIT_HOSTS`), ensuring MongoDB is accepting connections before starting `unpub_next`.
+- Add `docker-compose.yml` with MongoDB 6.0 and persistent data volumes.
+- Add dedicated Docker documentation in `docker/README.md`.
+- Update web UI navigation header with modernized Dart logo SVG.
+
 ## 3.0.1
 
 - Fix test suite and test fixtures for Dart 3 compatibility.

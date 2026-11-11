@@ -1,3 +1,8 @@
+## 3.1.0
+
+- Rebrand package to `unpub_next_auth` with backward-compatible `unpub_auth` CLI wrapper.
+- Bump version to 3.1.0 and align with `unpub_next` 3.1.0.
+
 ## 3.0.1
 
 - Bump version to 3.0.1 and align dependencies with unpub_next.

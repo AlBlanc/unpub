@@ -1,6 +1,6 @@
 name: unpub_next_web
 description: Web interface for unpub_next. Fork of pd4d10/unpub.
-version: 3.0.1
+version: 3.1.0
 homepage: https://github.com/AlBlanc/unpub
 repository: https://github.com/AlBlanc/unpub
 issue_tracker: https://github.com/AlBlanc/unpub/issues
