@@ -1,12 +1,26 @@
-name: lint
+name: CI
+
 on:
-  - push
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
 jobs:
-  build:
+  lint-and-test:
     runs-on: ubuntu-latest
-    container:
-      image: google/dart:latest
     steps:
-      - uses: actions/checkout@v2
-      - run: cd unpub && dart pub get && dart analyze
-      - run: dart format --set-exit-if-changed **/*.dart
+      - uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Check unpub package
+        working-directory: unpub
+        run: |
+          dart pub get
+          dart analyze
+          dart format --output=none --set-exit-if-changed .
+          dart test
