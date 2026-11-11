@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 import 'package:unpub_next/unpub.dart' as unpub;
@@ -6,7 +7,9 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 final notExistingPacakge = 'not_existing_package';
 final baseDir = path.absolute('unpub-packages');
-final pubHostedUrl = 'http://localhost:4000';
+final testPort =
+    int.tryParse(Platform.environment['UNPUB_TEST_PORT'] ?? '4000') ?? 4000;
+final pubHostedUrl = 'http://localhost:$testPort';
 final baseUri = Uri.parse(pubHostedUrl);
 
 final package0 = 'package_0';
@@ -27,7 +30,7 @@ createServer(String opEmail) async {
     overrideUploaderEmail: opEmail,
   );
 
-  var server = await app.serve('0.0.0.0', 4000);
+  var server = await app.serve('0.0.0.0', testPort);
   return server;
 }
 
@@ -51,13 +54,42 @@ Future<ProcessResult> pubPublish(String name, String version) {
   );
 }
 
-Future<ProcessResult> pubUploader(String name, String operation, String email) {
+Future<ProcessResult> pubUploader(
+  String name,
+  String operation,
+  String email,
+) async {
   assert(['add', 'remove'].contains(operation), 'operation error');
 
-  return Process.run(
-    'dart',
-    ['pub', 'uploader', operation, email],
-    workingDirectory: path.absolute('test/fixtures', name, '0.0.1'),
-    environment: {'PUB_HOSTED_URL': pubHostedUrl},
-  );
+  http.Response res;
+  if (operation == 'add') {
+    res = await http.post(
+      baseUri.resolve('/api/packages/$name/uploaders'),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/x-www-form-urlencoded',
+      },
+      body: {'email': email},
+    );
+  } else {
+    res = await http.delete(
+      baseUri.resolve(
+        '/api/packages/$name/uploaders/${Uri.encodeComponent(email)}',
+      ),
+    );
+  }
+
+  String stderr = '';
+  String stdout = '';
+  if (res.statusCode >= 400) {
+    try {
+      var data = json.decode(res.body);
+      stderr = data['error']?['message'] ?? res.body;
+    } catch (_) {
+      stderr = res.body;
+    }
+  } else {
+    stdout = res.body;
+  }
+
+  return ProcessResult(0, res.statusCode, stdout, stderr);
 }
