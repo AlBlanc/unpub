@@ -1,7 +1,9 @@
 name: unpub_next
 description: Self-hosted private Dart Pub server for Enterprise, with a simple web interface to search and view packages information. Fork of pd4d10/unpub with modernized dependencies and Dart 3 support.
 version: 3.0.0
-homepage: https://github.com/bytedance/unpub
+homepage: https://github.com/Alblanc/unpub
+repository: https://github.com/AlBlanc/unpub
+issue_tracker: https://github.com/AlBlanc/unpub/issues
 environment:
   sdk: ^3.8.0
 executables:
