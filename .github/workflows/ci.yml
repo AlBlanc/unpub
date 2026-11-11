@@ -1,10 +1,13 @@
-name: Publish to pub.dev
+name: CI/CD
 
 on:
   push:
+    branches: [ master, main ]
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
       - 'v[0-9]+.[0-9]+'
+  pull_request:
+    branches: [ master, main ]
   workflow_dispatch:
     inputs:
       dry_run:
@@ -12,8 +15,13 @@ on:
         type: boolean
         default: false
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  publish:
+  lint-and-test:
+    name: Lint & Test
     runs-on: ubuntu-latest
     services:
       mongodb:
@@ -26,9 +34,31 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Check unpub package
+        working-directory: unpub
+        run: |
+          dart pub get
+          dart analyze --fatal-infos
+          dart format --output=none --set-exit-if-changed .
+          dart test
+
+  publish:
+    name: Publish to pub.dev & GitHub Release
+    needs: lint-and-test
+    if: ${{ (startsWith(github.ref, 'refs/tags/v') || github.event.inputs.dry_run == 'true') && success() }}
+    runs-on: ubuntu-latest
     permissions:
       id-token: write # Mandatory for pub.dev OIDC authentication
-      contents: write # Needed if creating a GitHub Release
+      contents: write # Needed for GitHub Release
 
     steps:
       - name: Checkout repository
@@ -43,28 +73,18 @@ jobs:
         working-directory: unpub
         run: dart pub get
 
-      - name: Verify analysis and formatting
-        working-directory: unpub
-        run: |
-          dart analyze --fatal-infos
-          dart format --output=none --set-exit-if-changed .
-
-      - name: Run tests
-        working-directory: unpub
-        run: dart test
-
       - name: Publish to pub.dev (Dry Run)
         if: ${{ github.event.inputs.dry_run == 'true' }}
         working-directory: unpub
         run: dart pub publish --dry-run
 
       - name: Publish to pub.dev
-        if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.event.inputs.dry_run != 'true' }}
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && github.event.inputs.dry_run != 'true' }}
         working-directory: unpub
         run: dart pub publish --force
 
       - name: Create GitHub Release
-        if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
