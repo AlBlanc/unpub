@@ -1,0 +1,9 @@
+.git
+.github
+.idea
+.vscode
+**/.dart_tool
+**/build
+unpub_packages
+unpub-packages
+*.log
