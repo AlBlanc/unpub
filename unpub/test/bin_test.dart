@@ -42,7 +42,7 @@ void main() {
       expect(uri, 'mongodb://custom:27017/db');
     });
 
-    test('uses MONGO_URL when cli is default', () {
+    test('uses DB_URL or MONGO_URL when cli is default', () {
       final uri = resolveMongoUri(
         defaultUri: defaultDbUri,
         cliUri: defaultDbUri,

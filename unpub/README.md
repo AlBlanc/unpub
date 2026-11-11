@@ -24,19 +24,25 @@ docker compose up -d
 
 Access the server and web UI at: **`http://localhost:4000`**.
 
-#### Environment Variables
+The container includes a built-in TCP wait mechanism powered by [`docker-compose-wait`](https://github.com/ufoscout/docker-compose-wait) (similar to `trevorwang/docker-unpub`), ensuring MongoDB is actively accepting connections before `unpub_next` launches.
 
-You can configure the deployment via environment variables or a `.env` file (see `.env.example`):
+> [!TIP]
+> For in-depth Docker documentation, wait mechanism configuration, data volumes, and the complete environment variables reference, see [**`docker/README.md`**](docker/README.md).
+
+#### Environment Variables Summary
+
+You can configure the deployment via environment variables or a `.env` file (see [`.env.example`](.env.example)):
 
 | Variable | Description | Default |
 | --- | --- | --- |
-| `MONGO_URL` / `MONGODB_URI` | Full MongoDB connection URI | - |
+| `MONGO_URL` / `MONGODB_URI` / `DB_URL` | Full MongoDB connection URI | - |
 | `MONGO_HOST` | MongoDB hostname | `mongo` (or `localhost`) |
 | `MONGO_PORT` | MongoDB port | `27017` |
 | `MONGO_DB` | MongoDB database name | `dart_pub` |
 | `MONGO_USER` | MongoDB username (optional) | `admin` |
 | `MONGO_PASSWORD` | MongoDB password (optional) | `secretpassword` |
 | `MONGO_AUTH_SOURCE` | MongoDB auth source database | `admin` |
+| `WAIT_HOSTS` | Host:port pairs to wait for before starting | Inferred from MongoDB host/port |
 | `OVERRIDE_UPLOADER_EMAIL` | Override uploader email for published packages | - |
 | `UNPUB_PORT` | Port to expose | `4000` |
 | `UNPUB_HOST` | Host address to bind | `0.0.0.0` |
@@ -45,12 +51,13 @@ You can configure the deployment via environment variables or a `.env` file (see
 
 #### Dockerfile
 
-Build and run the standalone container directly:
+Build and run the standalone container directly from the repository root:
 
 ```sh
-docker build -t unpub_next .
+docker build -f docker/Dockerfile -t unpub_next .
 docker run -d -p 4000:4000 \
   -e MONGO_URL="mongodb://host.docker.internal:27017/dart_pub" \
+  -e WAIT_HOSTS="host.docker.internal:27017" \
   -e OVERRIDE_UPLOADER_EMAIL="admin@example.com" \
   -v unpub_data:/app/data \
   unpub_next
@@ -177,7 +184,7 @@ var app = unpub.App(
 
 #### Available Package Stores
 
-1. [unpub_next_aws](https://github.com/bytedance/unpub/tree/master/unpub_next_aws): AWS S3 package store.
+1. [unpub_next_aws](https://github.com/AlBlanc/unpub/tree/master/unpub_next_aws): AWS S3 package store.
 
 ## Alternatives
 

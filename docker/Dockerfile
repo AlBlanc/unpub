@@ -19,20 +19,29 @@ COPY unpub/ ./
 RUN dart compile exe bin/unpub_next.dart -o /app/bin/unpub_next
 
 # ------------------------------------------------------------------------------
-# Production Stage: Minimal runtime environment
+# Production Stage: Minimal runtime environment with docker-compose-wait
 # ------------------------------------------------------------------------------
 FROM debian:bookworm-slim
 
-# Install CA certificates for outbound HTTPS calls (pub.dev upstream, oauth, etc.)
+# Install CA certificates for outbound HTTPS calls (pub.dev upstream, oauth, etc.) and curl
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Add docker-compose-wait tool (https://github.com/ufoscout/docker-compose-wait)
+# Ensures MongoDB is fully up and ready before unpub_next starts
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /wait
+RUN chmod +x /wait
+
 WORKDIR /app
 
 # Copy compiled executable from build stage
 COPY --from=build /app/bin/unpub_next /app/bin/unpub_next
+
+# Copy entrypoint script
+COPY docker/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # Create directory for package tarballs and data storage
 RUN mkdir -p /app/data
@@ -49,4 +58,4 @@ EXPOSE 4000
 
 VOLUME ["/app/data"]
 
-ENTRYPOINT ["/app/bin/unpub_next"]
+ENTRYPOINT ["/app/entrypoint.sh"]
