@@ -14,6 +14,50 @@
 
 ## Usage
 
+### Docker & Docker Compose (Recommended for local / production)
+
+You can run `unpub_next` alongside a MongoDB container with a single command:
+
+```sh
+docker compose up -d
+```
+
+Access the server and web UI at: **`http://localhost:4000`**.
+
+#### Environment Variables
+
+You can configure the deployment via environment variables or a `.env` file (see `.env.example`):
+
+| Variable | Description | Default |
+| --- | --- | --- |
+| `MONGO_URL` / `MONGODB_URI` | Full MongoDB connection URI | - |
+| `MONGO_HOST` | MongoDB hostname | `mongo` (or `localhost`) |
+| `MONGO_PORT` | MongoDB port | `27017` |
+| `MONGO_DB` | MongoDB database name | `dart_pub` |
+| `MONGO_USER` | MongoDB username (optional) | `admin` |
+| `MONGO_PASSWORD` | MongoDB password (optional) | `secretpassword` |
+| `MONGO_AUTH_SOURCE` | MongoDB auth source database | `admin` |
+| `OVERRIDE_UPLOADER_EMAIL` | Override uploader email for published packages | - |
+| `UNPUB_PORT` | Port to expose | `4000` |
+| `UNPUB_HOST` | Host address to bind | `0.0.0.0` |
+| `UNPUB_PROXY_ORIGIN` | Public base URL (for reverse proxies) | `http://localhost:4000` |
+| `UNPUB_DATA_DIR` | Directory for tarball packages storage | `/app/data` |
+
+#### Dockerfile
+
+Build and run the standalone container directly:
+
+```sh
+docker build -t unpub_next .
+docker run -d -p 4000:4000 \
+  -e MONGO_URL="mongodb://host.docker.internal:27017/dart_pub" \
+  -e OVERRIDE_UPLOADER_EMAIL="admin@example.com" \
+  -v unpub_data:/app/data \
+  unpub_next
+```
+
+---
+
 ### Command Line
 
 ```sh
@@ -27,7 +71,7 @@ Options:
 - `--help`: Print CLI usage options.
 - `-h, --host`: Host to bind to (default: `0.0.0.0`).
 - `-p, --port`: Port to listen on (default: `4000`).
-- `-d, --database`: MongoDB connection URI (default: `mongodb://localhost:27017/dart_pub`).
+- `-d, --database`: MongoDB connection URI (default: `mongodb://localhost:27017/dart_pub` or `MONGO_URL`).
 - `-o, --proxy-origin`: Base URL if served behind a reverse proxy.
 - `-e, --override-uploader-email`: Override the uploader email address for published packages.
 
@@ -133,7 +177,7 @@ var app = unpub.App(
 
 #### Available Package Stores
 
-1. [unpub_aws](https://github.com/bytedance/unpub/tree/master/unpub_aws): AWS S3 package store, maintained by [@CleanCode](https://github.com/Clean-Cole).
+1. [unpub_next_aws](https://github.com/bytedance/unpub/tree/master/unpub_next_aws): AWS S3 package store.
 
 ## Badges
 

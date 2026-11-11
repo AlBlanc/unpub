@@ -1,0 +1,45 @@
+<header class="site-header-row">
+  <div class="container site-header">
+    <h1 class="_visuallyhidden">Dart pub</h1>
+    <button class="hamburger"></button>
+    <div class="mask"></div>
+    <div class="nav-wrap">
+      <div class="nav-header">
+        <a class="logo" [routerLink]="homeUrl"
+          ><img
+            src="/static/dart-logo.svg"
+            alt="dart pub logo"
+        /></a>
+        <div class="_flex-space"></div>
+        <button class="close"></button>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="_banner-bg">
+  <div class="container">
+    <div class="home-banner">
+      <form class="search-bar" action="/packages">
+        <input
+          class="input"
+          name="q"
+          placeholder="Search packages"
+          autocomplete="off"
+          autofocus
+        />
+        <button class="icon"></button>
+      </form>
+      <div class="banner-item">
+        <p class="text">
+          A private Dart package server.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<main class="container">
+  <router-outlet [routes]="routes"></router-outlet>
+</main>
+<footer class="site-footer">
+  <a class="link" href="https://github.com/bytedance/unpub">Powered by unpub</a>
+</footer>

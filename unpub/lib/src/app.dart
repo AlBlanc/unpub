@@ -20,6 +20,7 @@ import 'package:unpub_next/src/package_store.dart';
 import 'utils.dart';
 import 'static/index.html.dart' as index_html;
 import 'static/main.dart.js.dart' as main_dart_js;
+import 'static/dart_logo.svg.dart' as dart_logo_svg;
 
 part 'app.g.dart';
 
@@ -583,6 +584,15 @@ class App {
     return shelf.Response.ok(
       main_dart_js.content,
       headers: {HttpHeaders.contentTypeHeader: 'text/javascript'},
+    );
+  }
+
+  @Route.get('/static/dart-logo.svg')
+  @Route.get('/dart-logo.svg')
+  Future<shelf.Response> dartLogoSvg(shelf.Request req) async {
+    return shelf.Response.ok(
+      dart_logo_svg.content,
+      headers: {HttpHeaders.contentTypeHeader: 'image/svg+xml'},
     );
   }
 

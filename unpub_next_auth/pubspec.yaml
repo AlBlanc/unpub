@@ -1,0 +1,25 @@
+name: unpub_next_auth
+description: An auth tool for unpub / unpub_next. Fork of pd4d10/unpub with modernized dependencies and Dart 3 support.
+version: 3.0.0
+homepage: https://github.com/bytedance/unpub
+
+environment:
+  sdk: ^3.8.0
+
+executables:
+  unpub_next_auth: unpub_next_auth
+  unpub_auth: unpub_next_auth
+
+dependencies:
+  collection: ^1.18.0
+  path: ^1.9.0
+  http: ^1.2.0
+  shelf: ^1.4.1
+  http_multi_server: ^3.2.1
+  oauth2: ^2.0.2
+  args: ^2.5.0
+  console: ^4.1.0
+
+dev_dependencies:
+  lints: ^3.0.0
+  test: ^1.25.0
