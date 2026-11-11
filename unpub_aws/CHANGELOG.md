@@ -1,3 +1,7 @@
+## 3.0.1
+
+- Bump version to 3.0.1 and depend on `unpub_next` ^3.0.1.
+
 ## 3.0.0
 
 - Modernize for Dart 3 and depend on `unpub_next` ^3.0.0.

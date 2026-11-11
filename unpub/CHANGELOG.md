@@ -1,3 +1,9 @@
+## 3.0.1
+
+- Fix test suite and test fixtures for Dart 3 compatibility.
+- Add GitHub Actions CI/CD workflow with MongoDB service container.
+- Update repository and issue tracker URLs.
+
 ## 3.0.0
 
 - Rename package to `unpub_next` (fork of `pd4d10/unpub`).
