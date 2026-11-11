@@ -30,9 +30,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Add docker-compose-wait tool (https://github.com/ufoscout/docker-compose-wait)
-# Ensures MongoDB is fully up and ready before unpub_next starts
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /wait
-RUN chmod +x /wait
+# Multi-arch support (amd64 / arm64) using TARGETARCH
+ARG TARGETARCH
+RUN case "${TARGETARCH}" in \
+      "arm64") WAIT_URL="https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait_aarch64" ;; \
+      *) WAIT_URL="https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait" ;; \
+    esac && \
+    curl -fsSL -o /wait "$WAIT_URL" && \
+    chmod +x /wait
 
 WORKDIR /app
 
